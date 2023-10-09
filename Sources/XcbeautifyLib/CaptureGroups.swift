@@ -1216,7 +1216,7 @@ struct CompileWarningCaptureGroup: CaptureGroup {
     /// $1 = file path
     /// $2 = filename
     /// $3 = reason
-    static let regex = Regex(pattern: #"^(([^:]*):*\d*:*\d*):\swarning:\s(.*)$"#)
+    static let regex = Regex(pattern: #"^(?!ld)(([^:]*):*\d*:*\d*):\swarning:\s(.*)$"#)
 
     let filePath: String
     let filename: String
@@ -1237,7 +1237,7 @@ struct LDWarningCaptureGroup: CaptureGroup {
     /// Regular expression captured groups:
     /// $1 = ld prefix
     /// $2 = warning message
-    static let regex = Regex(pattern: #"^(ld: )warning: (.*)"#)
+    static let regex = Regex(pattern: #"^(ld: )warning: (?!.*duplicate symbol)(.*)"#)
 
     let ldPrefix: String
     let warningMessage: String
@@ -1441,7 +1441,7 @@ struct LDErrorCaptureGroup: ErrorCaptureGroup {
 
     /// Regular expression captured groups:
     /// $1 = whole error
-    static let regex = Regex(pattern: #"^(ld:.*)"#)
+    static let regex = Regex(pattern: #"^(ld:(?!.*warning:).*)"#)
 
     let wholeError: String
 
@@ -1473,7 +1473,7 @@ struct LinkerDuplicateSymbolsCaptureGroup: CaptureGroup {
 
     /// Regular expression captured groups:
     /// $1 = reason
-    static let regex = Regex(pattern: #"^(duplicate symbol .*):$"#)
+    static let regex = Regex(pattern: #"^.*(duplicate symbol .*):$"#)
 
     let reason: String
 
@@ -1538,7 +1538,7 @@ struct SymbolReferencedFromCaptureGroup: CaptureGroup {
     /// Regular expression captured groups:
     /// $1 = wholeError
     /// $2 = reference
-    static let regex = Regex(pattern: #"(\s+\"(.*)\", referenced from:)$"#)
+    static let regex = Regex(pattern: #"(\s+(.*), referenced from:)$"#)
 
     let wholeError: String
     let reference: String
@@ -1568,7 +1568,7 @@ struct ModuleIncludesErrorCaptureGroup: ErrorCaptureGroup {
 }
 
 struct UndefinedSymbolLocationCaptureGroup: CaptureGroup {
-    static let outputType: OutputType = .warning
+    static let outputType: OutputType = .error
     /// Regular expression captured groups:
     /// $1 = whole warning
     /// $2 = target

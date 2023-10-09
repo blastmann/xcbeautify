@@ -299,13 +299,39 @@ final class TerminalRendererTests: XCTestCase {
         XCTAssertEqual(noColoredFormatted(input), output)
     }
 
+    func testLdDuplicatedSymbolsErrorWithLdPrimeLog() {
+        let input = "duplicate symbol '_getVersion' in:"
+        let output = "[x] duplicate symbol '_getVersion' in"
+        XCTAssertEqual(noColoredFormatted(input), output)
+    }
+
+    func testLdWarningMatchAfterLdErrorMatch() {
+        let inputWarning1 = "ld: warning: object file (abc.a(write.o)) was built for newer iOS Simulator version (16.2) than being linked (12.0)"
+        let output1 = noColoredFormatted(inputWarning1)
+        XCTAssertEqual(output1, "[!] ld: object file (abc.a(write.o)) was built for newer iOS Simulator version (16.2) than being linked (12.0)")
+
+        let inputLdError1 = "duplicate symbol '_getVersion' in:"
+        let output2 = noColoredFormatted(inputLdError1)
+        XCTAssertEqual(output2, "[x] duplicate symbol '_getVersion' in")
+
+        let inputWarning2 = "ld: warning: method '+imageWithName:' in category from x.a(C.o) overrides method from class in y.a(D.o)"
+        let output3 = noColoredFormatted(inputWarning2)
+        XCTAssertEqual(output3, "[!] ld: method \'+imageWithName:\' in category from x.a(C.o) overrides method from class in y.a(D.o)")
+    }
+
     func testLibtool() { }
 
-    func testLinkerDuplicateSymbolsLocation() { }
+    func testLinkerDuplicateSymbolsLocation() {
+        let input = "    /Volumes/xxx/XcbeautifyLib.framework/XcbeautifyLib(Regex.o)"
+        let output = "[x]     /Volumes/xxx/XcbeautifyLib.framework/XcbeautifyLib(Regex.o)"
+        XCTAssertEqual(noColoredFormatted(input), output)
+    }
 
-    func testLinkerDuplicateSymbols() { }
-
-    func testLinkerUndefinedSymbolLocation() { }
+    func testLinkerUndefinedSymbolLocation() {
+        let input = "      __swift_FORCE_LOAD_$_swiftCompatibility56_$_ABCKit in ABCKit(Model.o)"
+        let output = "[x]       __swift_FORCE_LOAD_$_swiftCompatibility56_$_ABCKit in ABCKit(Model.o)"
+        XCTAssertEqual(noColoredFormatted(input), output)
+    }
 
     func testLinkerUndefinedSymbols() { }
 
@@ -468,8 +494,8 @@ final class TerminalRendererTests: XCTestCase {
 
     func testUndefinedSymbolLocation() {
         let formatted = noColoredFormatted("      MediaBrowser.ChatGalleryViewController.downloadImage() -> () in MediaBrowser(ChatGalleryViewController.o)")
-        XCTAssertEqual(formatted, "[!]       MediaBrowser.ChatGalleryViewController.downloadImage() -> () in MediaBrowser(ChatGalleryViewController.o)")
-        XCTAssertEqual(parser.outputType, .warning)
+        XCTAssertEqual(formatted, "[x]       MediaBrowser.ChatGalleryViewController.downloadImage() -> () in MediaBrowser(ChatGalleryViewController.o)")
+        XCTAssertEqual(parser.outputType, .error)
     }
 
     func testTestCaseMeasured() {

@@ -105,7 +105,7 @@ struct TerminalRenderer: OutputRendering {
     }
 
     func formatUndefinedSymbolLocation(group: UndefinedSymbolLocationCaptureGroup) -> String {
-        colored ? Symbol.warning + " " + group.wholeWarning.f.Yellow : Symbol.asciiWarning + " " + group.wholeWarning
+        colored ? Symbol.error + " " + group.wholeWarning.f.Red : Symbol.asciiError + " " + group.wholeWarning
     }
 
     func formatCompileWarning(group: CompileWarningCaptureGroup, additionalLines: @escaping () -> (String?)) -> String {
@@ -140,10 +140,19 @@ struct TerminalRenderer: OutputRendering {
         return colored ? "\(Symbol.error) \(reason.f.Red)" : "\(Symbol.asciiError) \(reason)"
     }
 
-    // TODO: Print file path
     func formatLinkerDuplicateSymbolsError(group: LinkerDuplicateSymbolsCaptureGroup) -> String {
         let reason = group.reason
         return colored ? "\(Symbol.error) \(reason.f.Red)" : "\(Symbol.asciiError) \(reason)"
+    }
+
+    func formatLinkerDuplicateSymbolsLocation(group: LinkerDuplicateSymbolsLocationCaptureGroup) -> String? {
+        let wholeError = group.wholeError
+        return colored ? "\(Symbol.error) \(Format.indent)\(wholeError.f.Red)" : "\(Symbol.asciiError) \(Format.indent)\(wholeError)"
+    }
+
+    func formatLinkerUndefinedSymbolLocation(group: LinkerUndefinedSymbolLocationCaptureGroup) -> String? {
+        let symbolLocation = group.symbolLocation
+        return colored ? "\(Symbol.error) \(symbolLocation.f.Red)" : "\(Symbol.asciiError) \(symbolLocation)"
     }
 
     func formatWillNotBeCodesignWarning(group: WillNotBeCodeSignedCaptureGroup) -> String {

@@ -72,7 +72,7 @@ struct GitHubActionsRenderer: OutputRendering {
 
     func formatUndefinedSymbolLocation(group: UndefinedSymbolLocationCaptureGroup) -> String {
         outputGitHubActionsLog(
-            annotationType: .warning,
+            annotationType: .error,
             message: group.wholeWarning
         )
     }
@@ -129,6 +129,14 @@ struct GitHubActionsRenderer: OutputRendering {
     func formatLinkerDuplicateSymbolsError(group: LinkerDuplicateSymbolsCaptureGroup) -> String {
         let reason = group.reason
         return outputGitHubActionsLog(annotationType: .error, message: reason)
+    }
+
+    func formatLinkerDuplicateSymbolsLocation(group: LinkerDuplicateSymbolsLocationCaptureGroup) -> String? {
+        let wholeError = group.wholeError
+        return outputGitHubActionsLog(
+            annotationType: .error,
+            message: wholeError
+        )
     }
 
     func formatLinkerUndefinedSymbolsError(group: LinkerUndefinedSymbolsCaptureGroup) -> String {

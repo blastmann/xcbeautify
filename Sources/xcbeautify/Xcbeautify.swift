@@ -66,9 +66,11 @@ struct Xcbeautify: ParsableCommand {
         )
 
         while let line = readLine() {
-            guard !line.isEmpty else { continue }
-            guard let formatted = parser.parse(line: line) else { continue }
-            output.write(parser.outputType, formatted)
+            autoreleasepool {
+                if let formatted = parser.parse(line: line) {
+                    output.write(parser.outputType, formatted)
+                }
+            }
         }
 
         if let formattedSummary = parser.formattedSummary() {
